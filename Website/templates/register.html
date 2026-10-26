@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Todo Time - Register</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23800020'/><text x='50' y='68' font-size='60' text-anchor='middle' fill='white'>✓</text></svg>">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/theme.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <span class="brand"><span class="logo">✓</span> Todo Time</span>
+        <button type="button" class="theme-btn" onclick="toggleTheme()">🌙</button>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1>Create an account</h1>
+
+            <form id="registerForm" method="POST" action="/register" autocomplete="off" novalidate>
+                <div class="form-row">
+                    <label>Name</label>
+                    <input type="text" name="name" value="{{ name }}" autocomplete="off">
+                    <span class="error" id="err_name">{% if errors.name %}{{ errors.name }}{% endif %}</span>
+                </div>
+                <div class="form-row">
+                    <label>Email</label>
+                    <input type="text" name="email" value="{{ email }}" autocomplete="off">
+                    <span class="error" id="err_email">{% if errors.email %}{{ errors.email }}{% endif %}</span>
+                </div>
+                <div class="form-row">
+                    <label>Password</label>
+                    <input type="password" name="password" autocomplete="new-password">
+                    <span class="error" id="err_password">{% if errors.password %}{{ errors.password }}{% endif %}</span>
+                </div>
+                <div class="form-row">
+                    <label>Confirm password</label>
+                    <input type="password" name="confirm_password" autocomplete="new-password">
+                    <span class="error" id="err_confirm_password">{% if errors.confirm_password %}{{ errors.confirm_password }}{% endif %}</span>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+
+            <p class="link-text">Already have an account? <a href="/login">Log in</a></p>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) { window.location.reload(); }
+        });
+
+        document.getElementById("registerForm").addEventListener("submit", function (event) {
+            var form = event.target;
+            var name = form.name.value.trim();
+            var email = form.email.value.trim();
+            var password = form.password.value;
+            var confirm = form.confirm_password.value;
+
+            var errors = { name: "", email: "", password: "", confirm_password: "" };
+
+            if (name === "") errors.name = "Name is required";
+            if (email === "") errors.email = "Email is required";
+            if (password === "") errors.password = "Password is required";
+            if (confirm === "") {
+                errors.confirm_password = "Confirm password is required";
+            } else if (password !== "" && password !== confirm) {
+                errors.confirm_password = "Passwords do not match";
+            }
+
+            document.getElementById("err_name").textContent = errors.name;
+            document.getElementById("err_email").textContent = errors.email;
+            document.getElementById("err_password").textContent = errors.password;
+            document.getElementById("err_confirm_password").textContent = errors.confirm_password;
+
+            if (errors.name || errors.email || errors.password || errors.confirm_password) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

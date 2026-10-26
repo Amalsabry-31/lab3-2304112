@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Library</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/library.css">
+    <script src="/static/theme.js"></script>
+</head>
+<body class="lib">
+    <div class="lib-navbar">
+        <span class="lib-brand">📚 My Library</span>
+        <span class="nav-right">
+            <a href="/">← Back to Todo Time</a>
+            <span>Hi, {{ name }}</span>
+            <button type="button" class="theme-btn" onclick="toggleTheme()">🌙</button>
+            <a class="logout" href="/logout">Log out</a>
+        </span>
+    </div>
+
+    <div class="lib-hero">
+        <h1>Build your own library</h1>
+        <p>Your favorite authors and books, all in one place.</p>
+    </div>
+
+    <div class="lib-container">
+
+        <h2 class="lib-title">Add an author</h2>
+        <form class="lib-form" method="POST" action="/library/author/add" autocomplete="off" novalidate>
+            <div class="lib-field">
+                <input type="text" name="name" placeholder="Author name" value="{{ author_values.get('name', '') }}">
+                <span class="lib-error">{{ author_errors.get('name', '') }}</span>
+            </div>
+            <div class="lib-field">
+                <select name="country">
+                    <option value="">Choose a country</option>
+                    {% for c in countries %}
+                    <option value="{{ c }}" {% if author_values.get('country') == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <span class="lib-error">{{ author_errors.get('country', '') }}</span>
+            </div>
+            <button type="submit" class="lib-btn">Add author</button>
+        </form>
+
+        <h2 class="lib-title">Add a book</h2>
+        <form class="lib-form" method="POST" action="/library/book/add" autocomplete="off" novalidate>
+            <div class="lib-field">
+                <input type="text" name="title" placeholder="Book title" value="{{ book_values.get('title', '') }}">
+                <span class="lib-error">{{ book_errors.get('title', '') }}</span>
+            </div>
+            <div class="lib-field">
+                <input type="text" name="price" placeholder="Price" value="{{ book_values.get('price', '') }}">
+                <span class="lib-error">{{ book_errors.get('price', '') }}</span>
+            </div>
+            <div class="lib-field">
+                <select name="author_id">
+                    <option value="">Choose an author</option>
+                    {% for a in authors %}
+                    <option value="{{ a[0] }}" {% if book_values.get('author_id') == a[0]|string %}selected{% endif %}>{{ a[0] }} - {{ a[1] }}</option>
+                    {% endfor %}
+                </select>
+                <span class="lib-error">{{ book_errors.get('author_id', '') }}</span>
+            </div>
+            <button type="submit" class="lib-btn">Add book</button>
+        </form>
+
+        <h2 class="lib-title">Books</h2>
+        {% if books %}
+        <div class="table-box">
+            <table class="lib-table">
+                <thead>
+                    <tr><th>ID</th><th>Title</th><th>Price</th><th>Author ID</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for b in books %}
+                    <tr>
+                        <td>{{ b[0] }}</td>
+                        <td>{{ b[1] }}</td>
+                        <td>{{ b[2] }}</td>
+                        <td>{{ b[3] }}</td>
+                        <td class="lib-actions">
+                            <a class="lib-link" href="/library/book/edit/{{ b[0] }}">Edit</a>
+                            <form method="POST" action="/library/book/delete/{{ b[0] }}"
+                                  onsubmit="return confirm('Are you sure you want to delete this book?');">
+                                <button type="submit" class="lib-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="lib-empty">The shelf is empty. Add your first book!</p>
+        {% endif %}
+
+        <h2 class="lib-title">Authors</h2>
+        {% if authors %}
+        <div class="table-box">
+            <table class="lib-table">
+                <thead>
+                    <tr><th>ID</th><th>Name</th><th>Country</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    {% for a in authors %}
+                    <tr>
+                        <td>{{ a[0] }}</td>
+                        <td>{{ a[1] }}</td>
+                        <td>{{ a[2] }}</td>
+                        <td class="lib-actions">
+                            <a class="lib-link" href="/library/author/edit/{{ a[0] }}">Edit</a>
+                            <form method="POST" action="/library/author/delete/{{ a[0] }}"
+                                  onsubmit="return confirm('Are you sure? Deleting this author will also delete all of their books.');">
+                                <button type="submit" class="lib-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="lib-empty">No authors yet.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) { window.location.reload(); }
+        });
+    </script>
+</body>
+</html>

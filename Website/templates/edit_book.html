@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit book</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238b5a2b'/><text x='50' y='68' font-size='55' text-anchor='middle'>📚</text></svg>">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/library.css">
+    <script src="/static/theme.js"></script>
+</head>
+<body class="lib">
+    <div class="lib-navbar">
+        <span class="lib-brand"><span class="logo">📚</span> My Library</span>
+        <span class="nav-right">
+            <a href="/library">← Back to Library</a>
+            <span>Hi, {{ name }}</span>
+            <button type="button" class="theme-btn" onclick="toggleTheme()">🌙</button>
+            <a class="logout" href="/logout">Log out</a>
+        </span>
+    </div>
+
+    <div class="lib-container">
+        <h2 class="lib-title">✏️ Edit book #{{ book_id }}</h2>
+        <form class="lib-form" method="POST" action="/library/book/edit/{{ book_id }}" autocomplete="off" novalidate>
+            <div class="lib-field">
+                <input type="text" name="title" placeholder="Book title" value="{{ values.get('title', '') }}">
+                <span class="lib-error">{{ errors.get('title', '') }}</span>
+            </div>
+            <div class="lib-field">
+                <input type="text" name="price" placeholder="Price" value="{{ values.get('price', '') }}">
+                <span class="lib-error">{{ errors.get('price', '') }}</span>
+            </div>
+            <div class="lib-field">
+                <select name="author_id">
+                    <option value="">Choose an author</option>
+                    {% for a in authors %}
+                    <option value="{{ a[0] }}" {% if values.get('author_id') == a[0]|string %}selected{% endif %}>{{ a[0] }} - {{ a[1] }}</option>
+                    {% endfor %}
+                </select>
+                <span class="lib-error">{{ errors.get('author_id', '') }}</span>
+            </div>
+            <button type="submit" class="lib-btn">Save</button>
+        </form>
+    </div>
+
+    <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) { window.location.reload(); }
+        });
+    </script>
+</body>
+</html>

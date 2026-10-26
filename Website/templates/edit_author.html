@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit author</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238b5a2b'/><text x='50' y='68' font-size='55' text-anchor='middle'>📚</text></svg>">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/library.css">
+    <script src="/static/theme.js"></script>
+</head>
+<body class="lib">
+    <div class="lib-navbar">
+        <span class="lib-brand"><span class="logo">📚</span> My Library</span>
+        <span class="nav-right">
+            <a href="/library">← Back to Library</a>
+            <span>Hi, {{ name }}</span>
+            <button type="button" class="theme-btn" onclick="toggleTheme()">🌙</button>
+            <a class="logout" href="/logout">Log out</a>
+        </span>
+    </div>
+
+    <div class="lib-container">
+        <h2 class="lib-title">✏️ Edit author #{{ author_id }}</h2>
+        <form class="lib-form" method="POST" action="/library/author/edit/{{ author_id }}" autocomplete="off" novalidate>
+            <div class="lib-field">
+                <input type="text" name="name" placeholder="Author name" value="{{ values.get('name', '') }}">
+                <span class="lib-error">{{ errors.get('name', '') }}</span>
+            </div>
+            <div class="lib-field">
+                <select name="country">
+                    <option value="">Choose a country</option>
+                    {% for c in countries %}
+                    <option value="{{ c }}" {% if values.get('country') == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <span class="lib-error">{{ errors.get('country', '') }}</span>
+            </div>
+            <button type="submit" class="lib-btn">Save</button>
+        </form>
+    </div>
+
+    <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) { window.location.reload(); }
+        });
+    </script>
+</body>
+</html>
